@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Component
 @Slf4j
@@ -16,6 +17,8 @@ public class FooServiceImpl implements FooService {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private FooService fooService;
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
@@ -82,6 +85,13 @@ public class FooServiceImpl implements FooService {
 //    @Transactional(rollbackFor = Exception.class)
     public void isActualTransactionActiveTest() {
         System.out.println(TransactionSynchronizationManager.isActualTransactionActive());
+    }
+
+    public void transactionTest() {
+        transactionTemplate.executeWithoutResult((transactionStatus)->{
+            jdbcTemplate.execute("INSERT INTO FOO (BAR) VALUES ('TEST')");
+            transactionStatus.setRollbackOnly();
+        });
     }
 
 }
