@@ -2,6 +2,8 @@ package com.example.springtest.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * description
  *
@@ -10,16 +12,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class GrantTypeSerive {
 
-    public String funcA(String resourceId){
+    public String getNew(){
         System.out.println("===============>A execute");
-        return "A" + resourceId;
+        return "NEW" + System.currentTimeMillis();
     }
-    public String funcB(String resourceId){
+    public String getCancel(){
         System.out.println("===============>B execute");
-        return "B" + resourceId;
+        return "CANCEL" + System.currentTimeMillis();
     }
-    public String funcC(String resourceId){
+    public String getUpdate(){
         System.out.println("===============>C execute");
-        return "C" + resourceId;
+        return "UPDATE" + System.currentTimeMillis();
     }
 }

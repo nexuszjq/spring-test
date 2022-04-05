@@ -19,3 +19,8 @@ mybatis:
     mapUnderscoreToCamelCase: true
     jdbc-type-for-null: 'null'
     local-cache-scope: statement
+
+lockeeper:
+  a: 1
+  b: 2
+  c: 3

@@ -59,4 +59,9 @@ public class DemoApplicationTests {
     public void testDemo() {
         myApplicationContext.getInvoke();
     }
+
+    @Test
+    public void testRollback() {
+        futureService.futureRollbackTest();
+    }
 }

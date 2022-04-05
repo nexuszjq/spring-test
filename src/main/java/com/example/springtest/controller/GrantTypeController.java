@@ -1,4 +1,4 @@
-package com.example.springtest.config;
+package com.example.springtest.controller;
 
 import com.example.springtest.service.impl.QueryGrantTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class GrantTypeController {
     private QueryGrantTypeService queryGrantTypeService;
 
     @PostMapping("/grantType")
-    public String test(String resourceName, String resourceId){
-        return queryGrantTypeService.getResult(resourceName, resourceId);
+    public String test(String resourceName){
+        return queryGrantTypeService.getResult(resourceName);
     }
 }

@@ -14,8 +14,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * description
@@ -76,5 +80,32 @@ public class FutureServiceImpl implements FutureService {
             syncList.add(self.invokeInterface());
         }
         System.out.println("耗时：" + (System.currentTimeMillis() - start));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void insert(Integer index) {
+        jdbcTemplate.update("INSERT INTO FOO (ID,BAR) VALUES (?,?)", new Object[]{index, "bar"+index});
+        if (Math.random() > 0.5) {
+            throw new RuntimeException("random error");
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void futureRollbackTest() {
+        AtomicInteger fail = new AtomicInteger(0);
+        List<CompletableFuture<Void>> futureList = new ArrayList<>();
+        IntStream.range(0,100).parallel().forEach(i->{
+            futureList.add(CompletableFuture.runAsync(() -> {
+               self.insert(i);
+            }, executor).exceptionally(ex->{
+                log.info("error：" + ex.getMessage());
+                fail.incrementAndGet();
+                return null;
+            }));
+        });
+        CompletableFuture.allOf(futureList.toArray(new CompletableFuture[futureList.size()])).join();
+        System.out.println("fail count：" + fail);
     }
 }

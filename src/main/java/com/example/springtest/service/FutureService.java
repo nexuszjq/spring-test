@@ -2,6 +2,7 @@ package com.example.springtest.service;
 
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * description
@@ -15,4 +16,8 @@ public interface FutureService {
     void futureTest();
 
     void futureTest2();
+
+    void insert(Integer index);
+
+    void futureRollbackTest();
 }

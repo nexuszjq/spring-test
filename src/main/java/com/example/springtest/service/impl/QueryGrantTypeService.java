@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * description
@@ -19,7 +21,7 @@ public class QueryGrantTypeService {
     @Autowired
     private GrantTypeSerive grantTypeSerive;
 
-    private Map<String, Function<String, String>> grantTypeMap = new HashMap<>();
+    private static final Map<String, Supplier<String>> EVENT_ID_MAP = new HashMap<>();
 
     /**
      * 初始化业务分派逻辑,代替了if-else部分
@@ -28,17 +30,17 @@ public class QueryGrantTypeService {
      */
     @PostConstruct
     public void dispatcherInit() {
-        grantTypeMap.put("funcA", resourceId -> grantTypeSerive.funcA(resourceId));
-        grantTypeMap.put("funcB", resourceId -> grantTypeSerive.funcB(resourceId));
-        grantTypeMap.put("funcC", resourceId -> grantTypeSerive.funcC(resourceId));
+        EVENT_ID_MAP.put("NEW", () -> grantTypeSerive.getNew());
+        EVENT_ID_MAP.put("CANCEL", () -> grantTypeSerive.getCancel());
+        EVENT_ID_MAP.put("UPDATE", () -> grantTypeSerive.getUpdate());
     }
 
-    public String getResult(String resourceType, String resourceId) {
+    public String getResult(String resourceType) {
         //Controller根据 优惠券类型resourceType、编码resourceId 去查询 发放方式grantType
-        Function<String, String> result = grantTypeMap.get(resourceType);
+        Supplier<String> result = EVENT_ID_MAP.get(resourceType);
         if (result != null) {
             //传入resourceId 执行这段表达式获得String型的grantType
-            return result.apply(resourceId);
+            return result.get();
         }
         return "no match";
     }

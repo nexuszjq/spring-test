@@ -1,5 +1,6 @@
 package com.example.springtest;
 
+import com.example.springtest.config.LockeeperProperties;
 import com.example.springtest.service.ConcurrentService;
 import com.example.springtest.service.FooService;
 import com.example.springtest.service.TransService;
